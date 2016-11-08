@@ -74,21 +74,23 @@ class WheelView : UIView {
             if(containsTouch(t)) {
                 // what!?
             } else {
-                self.touches.append(t)
+                let center = getObjectCenter()
+                if t.location(in: self).dist(center) <= radius * 1.5 {
+                    self.touches.append(t)
+                }
             }
         }
         
-        if self.touches.count > 1 || self.touches.count <= 0 {
-            // unlikely
-            return
+        if self.touches.count > 0 {
+            generator.prepare()
         }
         
-        touchBegan(self.touches.first!)
+        
         redraw()
     }
     
     @objc private func touchBegan(_ touch : UITouch) {
-        generator.prepare()
+        
         // generator = UIImpactFeedbackGenerator(style: .light)
     }
     
@@ -116,6 +118,7 @@ class WheelView : UIView {
         let curr = t.location(in: self)
         let last = t.previousLocation(in: self)
         
+        let center = getObjectCenter()
         let oldAngle = atan2(last.y - center.y, last.x - center.x)
         let newAngle = atan2(curr.y - center.y, curr.x - center.x)
         rotate(newAngle-oldAngle)
@@ -162,16 +165,6 @@ class WheelView : UIView {
         self.setNeedsDisplay()
     }
     
-    func drawOuterRim() {
-        UIColor.black.set()
-        drawCircle(at: center, radius: radius)
-    }
-    
-    func drawInnerRim() {
-        UIColor.black.set()
-        drawCircle(at: center, radius: 10)
-    }
-    
     func drawCircle(at: CGPoint, radius: CGFloat) {
         let o = UIBezierPath()
         o.addArc(withCenter: at,
@@ -210,12 +203,26 @@ class WheelView : UIView {
             at: at)
     }
     
+    func getObjectCenter() -> CGPoint {
+        return CGPoint(
+            x: self.center.x - self.frame.origin.x,
+            y: self.center.y - self.frame.origin.y)
+    }
+    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        drawOuterRim()
+        UIColor.red.set()
         
-        drawInnerRim()
+        let center = getObjectCenter()
+        
+//        drawCircle(at: center, radius: self.frame.width/2)
+//        drawCircle(at: center, radius: self.frame.width)
+        
+        UIColor.black.set()
+        
+        drawCircle(at: center, radius: radius)
+        drawCircle(at: center, radius: 10)
         
         if self.touches.count > 0 {
             let first = self.touches.first!
@@ -331,6 +338,7 @@ class WheelView : UIView {
             drawText("- \(i+1)", at: CGPoint(x: -65, y: textYOffset))
         }
         context.restoreGState()
+        
     }
     
     let stepAngle = CGFloat.pi / 11
