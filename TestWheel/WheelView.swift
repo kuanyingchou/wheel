@@ -27,6 +27,22 @@ class WheelView : UIView {
     
     let outlineColor = UIColor.white
     
+    var values : [(Int, String)] = []
+    var startAngle = -CGFloat.pi / 4 // -CGFloat.pi / 4 * 3
+    var startIndex = 0
+    
+    var span = 2 * CGFloat.pi - CGFloat.pi / 4 // 2 * CGFloat.pi
+    var step = 1
+    
+    var stepAngle : CGFloat {
+        get {
+            return CGFloat(span) / CGFloat(((values.count-1) * step))
+        }
+    }
+    
+    var labelSize : CGFloat = 12
+    var isSmallScaleVisible = true
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
     
@@ -174,6 +190,40 @@ class WheelView : UIView {
             y: self.center.y - self.frame.origin.y)
     }
     
+    func drawDecoRim() {
+        var angle : CGFloat = 0
+        var count = 0
+        let decoRim = UIBezierPath()
+        decoRim.move(to: CGPoint(x: radius+3, y: 0))
+        // decoRim.addLine(to: CGPoint(x: 100, y: 0))
+        
+        for _ in 1...80 {
+            var r : CGFloat = radius+3
+            angle += CGFloat.pi / 40 - CGFloat.pi / 150
+            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
+            r = radius+6
+            angle += CGFloat.pi / 150
+            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
+            
+            angle += CGFloat.pi / 40 - CGFloat.pi / 150
+            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
+            angle += CGFloat.pi / 150
+            r = radius+3
+            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
+            count += 1
+        }
+        
+        //        while angle < 2 * CGFloat.pi {
+        //            angle += CGFloat.pi / 10
+        //            // let r : CGFloat = count%2==0 ? 85 : 80
+        //            let r : CGFloat = 85
+        //            decoRim.addLine(to: CGPoint(x: cos(r), y: sin(r)))
+        //            count += 1
+        //        }
+        decoRim.close()
+        decoRim.stroke()
+    }
+    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
@@ -214,106 +264,122 @@ class WheelView : UIView {
         // drawCross(at: CGPoint.zero, radius: 20)
         
         // indicator
-//        outlineColor.set()
-//        drawLine(
-//            from: CGPoint(x: -radius - 20, y: 0),
-//            to: CGPoint(x: -radius - 10, y:0))
+        outlineColor.set()
+        let ux = cos(startAngle)
+        let uy = sin(startAngle)
+        let ib = CGPoint(x: (radius + 20) * ux, y: (radius + 20) * uy)
+        let ie = CGPoint(x: (radius+10) * ux, y: (radius+10) * uy)
+        drawLine(from: ib, to: ie)
         
-        let rot = round(self.rotation / stepAngle) * stepAngle
+        
+        // TODO: move elsewhere!
+        let sa = stepAngle
+        let rot = round(self.rotation / sa) * sa
         if rot != adjustedRotation {
             print("!! \(self.rotation)")
             AudioServicesPlaySystemSound (1306)
             generator.selectionChanged()
         } else {
             print("-- \(self.rotation)")
-            
+
         }
         context.rotate(by: rot)
-        
         adjustedRotation = rot
         
-        var angle : CGFloat = 0
-        var count = 0
-        let decoRim = UIBezierPath()
-        decoRim.move(to: CGPoint(x: radius+3, y: 0))
-        // decoRim.addLine(to: CGPoint(x: 100, y: 0))
         
-        for _ in 1...80 {
-            var r : CGFloat = radius+3
-            angle += CGFloat.pi / 40 - CGFloat.pi / 150
-            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
-            r = radius+6
-            angle += CGFloat.pi / 150
-            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
-            
-            angle += CGFloat.pi / 40 - CGFloat.pi / 150
-            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
-            angle += CGFloat.pi / 150
-            r = radius+3
-            decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
-            count += 1
+        drawDecoRim()
+        
+        let textYOffset : CGFloat = -labelSize / 2
+        
+        
+//        // first seg
+//        drawLine(
+//            from: CGPoint(x: -segBegin, y: 0),
+//            to: CGPoint(x: -segEnd, y: 0),
+//            width: lineWidth)
+//        
+//        outlineColor.set()
+//        drawText("0", at: CGPoint(x: -radius*0.8, y: textYOffset), color: outlineColor)
+        
+        if values.count <= 0 {
+            return
         }
         
-//        while angle < 2 * CGFloat.pi {
-//            angle += CGFloat.pi / 10
-//            // let r : CGFloat = count%2==0 ? 85 : 80
-//            let r : CGFloat = 85
-//            decoRim.addLine(to: CGPoint(x: cos(r), y: sin(r)))
-//            count += 1
-//        }
-        decoRim.close()
-        decoRim.stroke()
+        context.saveGState()
         
-        let segBegin = radius-8
-        let segEnd = radius-5
-        let lineWidth : CGFloat = 1;
-        let textYOffset : CGFloat = -11
+        context.rotate(by: startAngle + CGFloat.pi)
         
-        
-        
-        // first seg
-        drawLine(
-            from: CGPoint(x: -segBegin, y: 0),
-            to: CGPoint(x: -segEnd, y: 0),
-            width: lineWidth)
+        drawText(values[startIndex].1,
+                 at: CGPoint(x: -radius * 0.9, y: textYOffset),
+                 color: UIColor.orange)
         
         outlineColor.set()
-        drawText("0", at: CGPoint(x: -radius*0.8, y: textYOffset), color: outlineColor)
-        
         context.saveGState()
-        for i in 0..<3 {
-            for _ in 0..<3 {
-                context.rotate(by: CGFloat.pi / 11)
-                let scale = UIBezierPath()
-                scale.move(to: CGPoint(x: -segBegin, y: 0))
-                scale.addLine(to: CGPoint(x: -segEnd, y: 0))
-                scale.lineWidth = lineWidth
-                scale.stroke()
-                
+        
+        for i in (startIndex+1)..<values.count {
+            for j in 0..<step {
+                context.rotate(by: stepAngle)
+                if j < step-1 && isSmallScaleVisible {
+                    drawLine(from: CGPoint(x:-radius * 0.9, y:0),
+                             to: CGPoint(x: -radius*0.8, y:0))
+                }
             }
-            drawText("+ \(i+1)",
-                at: CGPoint(x: -radius * 0.8, y: textYOffset), color: outlineColor)
+            drawText(values[i].1,
+                     at: CGPoint(x: -radius * 0.9, y: textYOffset),
+                     fontSize: labelSize,
+                     color: outlineColor)
         }
         
         context.restoreGState()
-        context.saveGState()
-        for i in 0..<3 {
-            for _ in 0..<3 {
-                context.rotate(by: CGFloat.pi / -11)
-                let scale = UIBezierPath()
-                scale.move(to: CGPoint(x: -segBegin, y: 0))
-                scale.addLine(to: CGPoint(x: -segEnd, y: 0))
-                scale.lineWidth = lineWidth
-                scale.stroke()
-                
+        
+        for i in stride(from: startIndex-1, to: -1, by: -1) {
+            for j in 0..<step {
+                context.rotate(by: -stepAngle)
+                if j < step-1 && isSmallScaleVisible {
+                    drawLine(from: CGPoint(x:-radius * 0.9, y:0),
+                             to: CGPoint(x: -radius*0.8, y:0))
+                }
             }
-            drawText("- \(i+1)", at: CGPoint(x: -radius * 0.8, y: textYOffset), color: outlineColor)
+            drawText(values[i].1,
+                     at: CGPoint(x: -radius * 0.9, y: textYOffset),
+                     fontSize: labelSize,
+                     color: outlineColor)
         }
         context.restoreGState()
+        
+//        for i in 0..<3 {
+//            for _ in 0..<3 {
+//                context.rotate(by: CGFloat.pi / 11)
+//                let scale = UIBezierPath()
+//                scale.move(to: CGPoint(x: -segBegin, y: 0))
+//                scale.addLine(to: CGPoint(x: -segEnd, y: 0))
+//                scale.lineWidth = lineWidth
+//                scale.stroke()
+//                
+//            }
+//            drawText("+ \(i+1)",
+//                at: CGPoint(x: -radius * 0.8, y: textYOffset), color: outlineColor)
+//        }
+//        
+//        context.restoreGState()
+//        context.saveGState()
+//        for i in 0..<3 {
+//            for _ in 0..<3 {
+//                context.rotate(by: CGFloat.pi / -11)
+//                let scale = UIBezierPath()
+//                scale.move(to: CGPoint(x: -segBegin, y: 0))
+//                scale.addLine(to: CGPoint(x: -segEnd, y: 0))
+//                scale.lineWidth = lineWidth
+//                scale.stroke()
+//                
+//            }
+//            drawText("- \(i+1)", at: CGPoint(x: -radius * 0.8, y: textYOffset), color: outlineColor)
+//        }
+//        context.restoreGState()
         
     }
     
-    let stepAngle = CGFloat.pi / 11
+//    let stepAngle = CGFloat.pi / 11
     
     func rotate(_ angle: CGFloat) {
         // print("rotate \(angle)")

@@ -44,6 +44,10 @@
                         </subviews>
                         <color key="backgroundColor" red="0.20834280784965165" green="0.20834280784965165" blue="0.20834280784965165" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </view>
+                    <connections>
+                        <outlet property="exposureCompensationView" destination="jIM-fH-8MI" id="rBN-sm-pa8"/>
+                        <outlet property="shutterSpeedView" destination="4IL-xj-uxZ" id="r0r-tr-Pdq"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
