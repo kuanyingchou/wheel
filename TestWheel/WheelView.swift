@@ -12,7 +12,7 @@ import AVFoundation
 
 class WheelView : UIView {
     
-    var radius : CGFloat = 80
+    var radius : CGFloat = 60
     var rotation : CGFloat = 0
     var adjustedRotation : CGFloat = 0
     
@@ -214,10 +214,10 @@ class WheelView : UIView {
         // drawCross(at: CGPoint.zero, radius: 20)
         
         // indicator
-        outlineColor.set()
-        drawLine(
-            from: CGPoint(x: -radius - 20, y: 0),
-            to: CGPoint(x: -radius - 10, y:0))
+//        outlineColor.set()
+//        drawLine(
+//            from: CGPoint(x: -radius - 20, y: 0),
+//            to: CGPoint(x: -radius - 10, y:0))
         
         let rot = round(self.rotation / stepAngle) * stepAngle
         if rot != adjustedRotation {
@@ -253,6 +253,7 @@ class WheelView : UIView {
             decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
             count += 1
         }
+        
 //        while angle < 2 * CGFloat.pi {
 //            angle += CGFloat.pi / 10
 //            // let r : CGFloat = count%2==0 ? 85 : 80

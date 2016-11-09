@@ -13,7 +13,8 @@ class ShutterButton : UIView {
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         UIColor.white.set()
-        drawCircle(at: getObjectCenter(), radius: 38);
+        drawCircle(at: getObjectCenter(), radius: 35);
+        drawCircle(at: getObjectCenter(), radius: 5);
     }
     
     func getObjectCenter() -> CGPoint {
