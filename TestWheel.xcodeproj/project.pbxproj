@@ -18,6 +18,9 @@
 		BE3309F71DCDB73100825695 /* TestWheelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE3309F61DCDB73100825695 /* TestWheelTests.swift */; };
 		BE330A021DCDB73100825695 /* TestWheelUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE330A011DCDB73100825695 /* TestWheelUITests.swift */; };
 		BE330A101DCDB85200825695 /* WheelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE330A0F1DCDB85200825695 /* WheelView.swift */; };
+		BE4971D21DD21BD100FF55ED /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4971D11DD21BD100FF55ED /* Graphics.swift */; };
+		BE4971D41DD2B8D100FF55ED /* ViewFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4971D31DD2B8D100FF55ED /* ViewFinder.swift */; };
+		BE4971D61DD2BAAC00FF55ED /* ShutterButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE4971D51DD2BAAC00FF55ED /* ShutterButton.swift */; };
 		E2E4B128EE3455A4AA880121 /* Pods_TestWheelUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 539552DE78D2B28A9F2CF2B9 /* Pods_TestWheelUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +64,9 @@
 		BE330A011DCDB73100825695 /* TestWheelUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestWheelUITests.swift; sourceTree = "<group>"; };
 		BE330A031DCDB73100825695 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BE330A0F1DCDB85200825695 /* WheelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WheelView.swift; sourceTree = "<group>"; };
+		BE4971D11DD21BD100FF55ED /* Graphics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Graphics.swift; sourceTree = "<group>"; };
+		BE4971D31DD2B8D100FF55ED /* ViewFinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewFinder.swift; sourceTree = "<group>"; };
+		BE4971D51DD2BAAC00FF55ED /* ShutterButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShutterButton.swift; sourceTree = "<group>"; };
 		D3DC986177FC57734F7FF4F2 /* Pods-TestWheelTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TestWheelTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TestWheelTests/Pods-TestWheelTests.debug.xcconfig"; sourceTree = "<group>"; };
 		DFAE25229947C08D64D06B3D /* Pods_TestWheelTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TestWheelTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -149,6 +155,9 @@
 				BE3309ED1DCDB73100825695 /* Info.plist */,
 				BE3309E51DCDB73100825695 /* TestWheel.xcdatamodeld */,
 				BE330A0F1DCDB85200825695 /* WheelView.swift */,
+				BE4971D11DD21BD100FF55ED /* Graphics.swift */,
+				BE4971D31DD2B8D100FF55ED /* ViewFinder.swift */,
+				BE4971D51DD2BAAC00FF55ED /* ShutterButton.swift */,
 			);
 			path = TestWheel;
 			sourceTree = "<group>";
@@ -455,9 +464,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE4971D41DD2B8D100FF55ED /* ViewFinder.swift in Sources */,
 				BE3309E71DCDB73100825695 /* TestWheel.xcdatamodeld in Sources */,
+				BE4971D21DD21BD100FF55ED /* Graphics.swift in Sources */,
 				BE3309E11DCDB73100825695 /* ViewController.swift in Sources */,
 				BE330A101DCDB85200825695 /* WheelView.swift in Sources */,
+				BE4971D61DD2BAAC00FF55ED /* ShutterButton.swift in Sources */,
 				BE3309DF1DCDB73100825695 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

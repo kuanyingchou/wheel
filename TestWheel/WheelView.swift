@@ -12,7 +12,7 @@ import AVFoundation
 
 class WheelView : UIView {
     
-    var radius = CGFloat(80)
+    var radius : CGFloat = 80
     var rotation : CGFloat = 0
     var adjustedRotation : CGFloat = 0
     
@@ -24,6 +24,8 @@ class WheelView : UIView {
     var generator = UISelectionFeedbackGenerator()
     
     var touches : [UITouch] = []
+    
+    let outlineColor = UIColor.white
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -42,6 +44,8 @@ class WheelView : UIView {
         tap.numberOfTapsRequired = 2;
         
         self.addGestureRecognizer(tap)
+        
+        self.backgroundColor = UIColor(white: 1, alpha: 0)
         
 //        
 //        let touchsBeganStream = self.rx.sentMessage(#selector(self.touchesBegan(_:with:)))
@@ -89,11 +93,6 @@ class WheelView : UIView {
         redraw()
     }
     
-    @objc private func touchBegan(_ touch : UITouch) {
-        
-        // generator = UIImpactFeedbackGenerator(style: .light)
-    }
-    
     private func containsTouch(_ t : UITouch) -> Bool {
         for o in self.touches {
             if o == t {
@@ -128,9 +127,19 @@ class WheelView : UIView {
         redraw()
     }
     
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with    event: UIEvent?) {
         
         super.touchesEnded(touches, with: event)
+        touchesEndedOrCancelled(touches, with: event)
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        super.touchesCancelled(touches, with: event)
+        touchesEndedOrCancelled(touches, with: event)
+    }
+    
+    func touchesEndedOrCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         if self.touches.count <= 0 {
             return
         }
@@ -155,52 +164,8 @@ class WheelView : UIView {
         print("touch ended")
     }
     
-    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesCancelled(touches, with: event)
-        redraw()
-        print("touch cancelled")
-    }
-    
     func redraw() {
         self.setNeedsDisplay()
-    }
-    
-    func drawCircle(at: CGPoint, radius: CGFloat) {
-        let o = UIBezierPath()
-        o.addArc(withCenter: at,
-                        radius: radius,
-                        startAngle: 0,
-                        endAngle: 2 * CGFloat.pi,
-                        clockwise: true)
-        o.close()
-        o.stroke()
-    }
-    
-    func drawCross(at: CGPoint, radius: CGFloat) {
-        let o = UIBezierPath()
-        o.move(to: CGPoint(x: at.x-radius, y: at.y))
-        o.addLine(to: CGPoint(x: at.x+radius, y: at.y))
-        o.move(to: CGPoint(x: at.x, y: at.y+radius))
-        o.addLine(to: CGPoint(x: at.x, y: at.y-radius))
-        o.stroke()
-    }
-    
-    func drawLine(from: CGPoint, to: CGPoint, width: CGFloat = 1) {
-        let o = UIBezierPath()
-        o.lineWidth = width
-        o.move(to: from)
-        o.addLine(to: to)
-        o.stroke()
-    }
-    
-    func drawText(_ text: String, at: CGPoint,
-                  fontName: String = "Helvetica",
-                  fontSize: CGFloat = 18) {
-        let specialAttr = [
-            NSFontAttributeName: UIFont(name: fontName, size: fontSize)!
-        ]
-        NSAttributedString(string: text, attributes: specialAttr).draw(
-            at: at)
     }
     
     func getObjectCenter() -> CGPoint {
@@ -219,21 +184,24 @@ class WheelView : UIView {
 //        drawCircle(at: center, radius: self.frame.width/2)
 //        drawCircle(at: center, radius: self.frame.width)
         
-        UIColor.black.set()
+        outlineColor.set()
         
         drawCircle(at: center, radius: radius)
-        drawCircle(at: center, radius: 10)
+        drawCircle(at: center, radius: radius / 8)
         
-        if self.touches.count > 0 {
-            let first = self.touches.first!
-            UIColor.green.set()
-            drawCircle(at: first.location(in: self), radius: 20)
-            UIColor.blue.set()
-            for i in stride(from: 1, to: self.touches.count, by: 1) {
-                drawCircle(at: self.touches[i].location(in: self), radius: 20)
-            }
-            
-        }
+//        if self.touches.count > 0 {
+//            let first = self.touches.first!
+//            UIColor.green.set()
+//            drawCircle(at: first.location(in: self), radius: 20)
+//            UIColor.blue.set()
+//            for i in stride(from: 1, to: self.touches.count, by: 1) {
+//                drawCircle(at: self.touches[i].location(in: self), radius: 20)
+//            }
+//            
+//        }
+        
+        // drawRect(from: CGPoint.zero,
+        //         to: CGPoint(x: self.bounds.width, y: self.bounds.height))
         
         guard let context = UIGraphicsGetCurrentContext() else {
             return
@@ -241,13 +209,15 @@ class WheelView : UIView {
         
         context.translateBy(x: center.x, y: center.y)
         
-        // cross at center
-        UIColor.red.set()
-        drawCross(at: CGPoint.zero, radius: 20)
+        //// cross at center
+        // UIColor.red.set()
+        // drawCross(at: CGPoint.zero, radius: 20)
         
         // indicator
-        UIColor.black.set()
-        drawLine(from: CGPoint(x: -100, y: 0), to: CGPoint(x: -90, y:0))
+        outlineColor.set()
+        drawLine(
+            from: CGPoint(x: -radius - 20, y: 0),
+            to: CGPoint(x: -radius - 10, y:0))
         
         let rot = round(self.rotation / stepAngle) * stepAngle
         if rot != adjustedRotation {
@@ -265,21 +235,21 @@ class WheelView : UIView {
         var angle : CGFloat = 0
         var count = 0
         let decoRim = UIBezierPath()
-        decoRim.move(to: CGPoint(x: 83, y: 0))
+        decoRim.move(to: CGPoint(x: radius+3, y: 0))
         // decoRim.addLine(to: CGPoint(x: 100, y: 0))
         
         for _ in 1...80 {
-            var r : CGFloat = 83
+            var r : CGFloat = radius+3
             angle += CGFloat.pi / 40 - CGFloat.pi / 150
             decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
-            r = 85
+            r = radius+6
             angle += CGFloat.pi / 150
             decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
             
             angle += CGFloat.pi / 40 - CGFloat.pi / 150
             decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
             angle += CGFloat.pi / 150
-            r = 83
+            r = radius+3
             decoRim.addLine(to: CGPoint(x: r * cos(angle), y: r * sin(angle)))
             count += 1
         }
@@ -293,10 +263,10 @@ class WheelView : UIView {
         decoRim.close()
         decoRim.stroke()
         
-        let segBegin = 70
-        let segEnd = 75
+        let segBegin = radius-8
+        let segEnd = radius-5
         let lineWidth : CGFloat = 1;
-        let textYOffset = -11
+        let textYOffset : CGFloat = -11
         
         
         
@@ -306,8 +276,8 @@ class WheelView : UIView {
             to: CGPoint(x: -segEnd, y: 0),
             width: lineWidth)
         
-        UIColor.black.set()
-        drawText("0", at: CGPoint(x: -65, y: textYOffset))
+        outlineColor.set()
+        drawText("0", at: CGPoint(x: -radius*0.8, y: textYOffset), color: outlineColor)
         
         context.saveGState()
         for i in 0..<3 {
@@ -320,7 +290,8 @@ class WheelView : UIView {
                 scale.stroke()
                 
             }
-            drawText("+ \(i+1)", at: CGPoint(x: -65, y: textYOffset))
+            drawText("+ \(i+1)",
+                at: CGPoint(x: -radius * 0.8, y: textYOffset), color: outlineColor)
         }
         
         context.restoreGState()
@@ -335,7 +306,7 @@ class WheelView : UIView {
                 scale.stroke()
                 
             }
-            drawText("- \(i+1)", at: CGPoint(x: -65, y: textYOffset))
+            drawText("- \(i+1)", at: CGPoint(x: -radius * 0.8, y: textYOffset), color: outlineColor)
         }
         context.restoreGState()
         
